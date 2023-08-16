@@ -1,7 +1,9 @@
 import 'package:first_app/home_screen.dart';
-import 'package:first_app/scr/forget.dart';
+import 'package:first_app/veiws/scr/forget.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,9 +13,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  var formkey = GlobalKey<FormState>();
-  final formKey= GlobalKey<FormState>();
-TextEditingController emailController=TextEditingController();
+ 
+  final formKey = GlobalKey<FormState>();
+  TextEditingController emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ TextEditingController emailController=TextEditingController();
       body: Form(
         child: SingleChildScrollView(
           child: Form(
-            key: formkey,
+            key: formKey,
             autovalidateMode: AutovalidateMode.always,
             child: Padding(
               padding: const EdgeInsets.all(20.0),
@@ -36,6 +38,7 @@ TextEditingController emailController=TextEditingController();
                       ),
                     ),
                     TextFormField(
+                       controller: emailController,
                       decoration: InputDecoration(
                         hintText: "email",
                         prefixIcon: const Icon(Icons.email),
@@ -67,6 +70,7 @@ TextEditingController emailController=TextEditingController();
                       height: 10,
                     ),
                     TextFormField(
+                    
                       decoration: InputDecoration(
                         hintText: "passward",
                         prefixIcon: const Icon(Icons.lock),
@@ -119,14 +123,17 @@ TextEditingController emailController=TextEditingController();
                           elevation: 10.0,
                           color: Colors.orange,
                           onPressed: () async {
-                            
-                            final SharedPreferences prefs =await SharedPreferences.getInstance();
-                            await prefs.setString('email', emailController.text);
+                            final SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            await prefs.setString(
+                                'email', emailController.text);
+                        
+
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => Home_Screen()));
-                            if (formkey.currentState!.validate()) {
+                            if (formKey.currentState!.validate()) {
                               // Validated successfully, perform login action
                               // You can access the email and password using _emailController.text and _passwordController.text
                               print(

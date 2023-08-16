@@ -1,32 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Page1 extends StatelessWidget {
-  const Page1({super.key});
-
+class Page1 extends StatefulWidget {
   @override
-  State<Page1>  createState() => Page1State();
+  State<Page1> createState() => _Page1State();
 }
-class_Page1State extends; State<Page1>{
-  String email='';
 
-  getCashEmail()async{
-    final SharedPreferences prefs =await SharedPreferences.getInstance();
-    email = prefs.getString('email')?? '--';
-    setState(() {} );
+class _Page1State extends State<Page1> {
+  String email = "";
+
+  getEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    email = prefs.getString("email") ?? '--';
+    setState(() {});
   }
+
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    getCashEmail();
+    getEmail();
   }
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Page1 \n $email',
-        style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-      ),
+    return Scaffold(
+      body: Center(child: Text(email)),
     );
   }
 }
+ 
