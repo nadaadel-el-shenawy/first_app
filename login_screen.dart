@@ -1,9 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:first_app/home_screen.dart';
 import 'package:first_app/veiws/scr/forget.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,9 +13,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
- 
   final formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     TextFormField(
-                       controller: emailController,
+                      controller: emailController,
                       decoration: InputDecoration(
                         hintText: "email",
                         prefixIcon: const Icon(Icons.email),
@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 10,
                     ),
                     TextFormField(
-                    
+                      controller: passwordController,
                       decoration: InputDecoration(
                         hintText: "passward",
                         prefixIcon: const Icon(Icons.lock),
@@ -127,17 +127,27 @@ class _LoginScreenState extends State<LoginScreen> {
                                 await SharedPreferences.getInstance();
                             await prefs.setString(
                                 'email', emailController.text);
-                        
 
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => Home_Screen()));
                             if (formKey.currentState!.validate()) {
+                              bool result = await fireBaselogin(
+                                  emailController.text,
+                                  passwordController.text);
+                              if (result == true) {
+                                fireBaselogin(emailController.text,
+                                    passwordController.text);
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('login faild')),
+                                );
+                              }
                               // Validated successfully, perform login action
                               // You can access the email and password using _emailController.text and _passwordController.text
-                              print(
-                                  'Validation successful!'); // Replace with your action
+                              print('Validation successful!');
+                              // Replace with your action
                             }
                           },
                           child: const Text(
@@ -176,5 +186,24 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  Future<bool> fireBaselogin(String email, String password) async {
+    try {
+      FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      if (userCredential.user != null) {
+        return true;
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
+    }
+    return false;
   }
 }
